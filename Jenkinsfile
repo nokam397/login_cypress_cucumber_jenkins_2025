@@ -21,7 +21,15 @@ pipeline {
 
     post {
         always {
-            sh 'tools/generate_html_cucumber_report.sh'
+            // Vérifie que le script existe avant de l'exécuter
+            script {
+                if (fileExists('tools/generate_html_cucumber_report.sh')) {
+                    sh 'chmod +x tools/generate_html_cucumber_report.sh'
+                    sh 'tools/generate_html_cucumber_report.sh'
+                } else {
+                    echo "⚠️  Script generate_html_cucumber_report.sh introuvable, rapport non généré."
+                }
+            }
             archiveArtifacts artifacts: 'cypress/screenshots/**, reports/**', allowEmptyArchive: true
         }
     }
